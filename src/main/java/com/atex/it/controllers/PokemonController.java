@@ -8,7 +8,10 @@ import com.atex.it.models.WaterPokemon;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import static spark.Spark.*;
+import static spark.Spark.get;
+import static spark.Spark.post;
+import static spark.Spark.delete;
+import static spark.Spark.put;
 
 public class PokemonController {
     public static void main(String[] args) {
@@ -20,8 +23,15 @@ public class PokemonController {
         // Obtener todos los Pokémon
         get("/pokemon", (req, res) -> {
             res.type("application/json");
-            return gson.toJson(pokemonService.getAllPokemon());
+            try {
+                return gson.toJson(pokemonService.getAllPokemon());
+            } catch (Exception e) {
+                e.printStackTrace(); // Imprime el error en la consola
+                res.status(500);
+                return "Error fetching Pokémon: " + e.getMessage();
+            }
         });
+        
 
         // Crear un nuevo Pokémon
         post("/pokemon", (req, res) -> {

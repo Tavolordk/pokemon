@@ -1,9 +1,5 @@
 package com.atex.it.models;
 
-import com.atex.it.adapters.PokemonTypeAdapter;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 public abstract class Pokemon {
     private Long id;
     private String name;
@@ -15,10 +11,6 @@ public abstract class Pokemon {
         this.name = name;
         this.imageUrl = imageUrl;
     }
-    Gson gson = new GsonBuilder()
-        .registerTypeAdapter(Pokemon.class, new PokemonTypeAdapter())
-        .create();
-
 
     // Getters y Setters
     public Long getId() {

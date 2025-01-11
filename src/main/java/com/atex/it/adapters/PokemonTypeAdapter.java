@@ -7,19 +7,30 @@ import com.google.gson.*;
 
 import java.lang.reflect.Type;
 
-public class PokemonTypeAdapter implements JsonDeserializer<Pokemon> {
+public class PokemonTypeAdapter implements JsonSerializer<Pokemon>, JsonDeserializer<Pokemon> {
     @Override
     public Pokemon deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject jsonObject = json.getAsJsonObject();
-        String type = jsonObject.get("type").getAsString();
+        String pokemonType = jsonObject.get("type").getAsString();
 
-        if ("Electric".equalsIgnoreCase(type)) {
-            return context.deserialize(jsonObject, ElectricPokemon.class);
-        } else if ("Water".equalsIgnoreCase(type)) {
-            return context.deserialize(jsonObject, WaterPokemon.class);
+        if ("Electric".equalsIgnoreCase(pokemonType)) {
+            return context.deserialize(json, ElectricPokemon.class);
+        } else if ("Water".equalsIgnoreCase(pokemonType)) {
+            return context.deserialize(json, WaterPokemon.class);
+        } else {
+            throw new JsonParseException("Unknown Pokémon type: " + pokemonType);
         }
+    }
 
-        throw new JsonParseException("Unknown Pokémon type: " + type);
+    @Override
+    public JsonElement serialize(Pokemon src, Type typeOfSrc, JsonSerializationContext context) {
+        JsonObject jsonObject = context.serialize(src).getAsJsonObject();
+        if (src instanceof ElectricPokemon) {
+            jsonObject.addProperty("type", "Electric");
+        } else if (src instanceof WaterPokemon) {
+            jsonObject.addProperty("type", "Water");
+        }
+        return jsonObject;
     }
 }
 
